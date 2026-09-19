@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hardwaredle</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="hd-root">
+    <div class="hd-wrap">
+
+      <!-- Header -->
+      <header class="hd-header">
+        <div class="hd-lockup">
+          <div class="hd-brand">
+            <svg class="hd-brand-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="11" y="11" width="26" height="26" rx="3" />
+              <rect x="18" y="18" width="12" height="12" rx="1.5" />
+              <path d="M18 4v7M24 4v7M30 4v7M18 37v7M24 37v7M30 37v7M4 18h7M4 24h7M4 30h7M37 18h7M37 24h7M37 30h7" />
+            </svg>
+            <h1 class="hd-wordmark">Hardwaredle</h1>
+          </div>
+          <div class="hd-rgb" aria-hidden="true"></div>
+        </div>
+        <p class="hd-tagline">Uhádni PC komponentu</p>
+
+        <dl class="hd-stats">
+          <div><dt>Výhry</dt><dd id="stat-wins">0</dd></div>
+          <div><dt>Odehráno</dt><dd id="stat-played">0</dd></div>
+          <div><dt>Nejlepší</dt><dd id="stat-best">-</dd></div>
+          <div><dt>Aktuální pokusy</dt><dd id="stat-attempts">0</dd></div>
+        </dl>
+      </header>
+
+      <!-- Search -->
+      <section class="hd-search" id="search">
+        <div class="hd-field-wrap">
+          <svg class="hd-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+          </svg>
+
+          <input
+            id="search-input"
+            class="hd-input"
+            type="text"
+            placeholder="Napiš název komponenty..."
+            autocomplete="off"
+            spellcheck="false"
+            role="combobox"
+            aria-label="Název komponenty"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-controls="hd-listbox"
+          >
+
+          <button type="button" class="hd-clear" id="search-clear" aria-label="Smazat hledání" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+
+          <ul class="hd-list" id="hd-listbox" role="listbox" hidden></ul>
+          <div class="hd-list hd-list-empty" id="no-results" hidden>Nic nenalezeno. Zkus jiný název.</div>
+        </div>
+
+        <p class="hd-help" id="help">
+          Zelené pole znamená shodu. Šipka u roku ukazuje, kterým směrem hledat: ↑ novější, ↓ starší.
+        </p>
+
+        <div class="hd-done" id="done" hidden>
+          <p id="done-text"></p>
+          <button type="button" class="hd-btn" id="done-restart">Hrát znovu</button>
+        </div>
+      </section>
+
+      <!-- Board: column headers are also read by script.js -->
+      <div class="hd-board" id="board" hidden>
+        <div class="hd-cols" aria-hidden="true">
+          <span></span>
+          <span data-key="name">Komponenta</span>
+          <span data-key="type">Typ</span>
+          <span data-key="brand">Značka</span>
+          <span data-key="year">Rok</span>
+          <span data-key="interface">Rozhraní</span>
+          <span data-key="tier">Třída</span>
+        </div>
+        <div class="hd-rows" id="rows"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="hd-empty" id="empty">
+        <svg class="hd-empty-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="11" y="11" width="26" height="26" rx="3" />
+          <rect x="18" y="18" width="12" height="12" rx="1.5" />
+          <path d="M18 4v7M24 4v7M30 4v7M18 37v7M24 37v7M30 37v7M4 18h7M4 24h7M4 30h7M37 18h7M37 24h7M37 30h7" />
+        </svg>
+        <p><strong>Vyhledej a vyber komponentu pro začátek hry!</strong></p>
+        <p>Začni třeba na „RTX“ nebo „Ryzen“.</p>
+      </div>
+
+      <noscript><p class="hd-help">Hardwaredle potřebuje zapnutý JavaScript.</p></noscript>
+    </div>
+
+    <!-- Win dialog -->
+    <div class="hd-overlay" id="overlay" hidden>
+      <div class="hd-modal" role="dialog" aria-modal="true" aria-labelledby="win-title">
+        <div class="hd-rgb" aria-hidden="true"></div>
+        <h2 id="win-title">Skvělé! Uhodl jsi!</h2>
+        <p class="hd-win-name" id="win-name"></p>
+
+        <ul class="hd-specs" id="win-specs"></ul>
+
+        <dl class="hd-result">
+          <div><dt>Potřebné pokusy</dt><dd id="win-attempts"></dd></div>
+          <div><dt>Celkem výher</dt><dd id="win-wins"></dd></div>
+          <div><dt>Nejlepší výkon</dt><dd id="win-best"></dd></div>
+        </dl>
+
+        <div class="hd-actions">
+          <button type="button" class="hd-btn" id="win-restart">Hrát znovu</button>
+          <button type="button" class="hd-btn-ghost" id="win-close">Zavřít</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
