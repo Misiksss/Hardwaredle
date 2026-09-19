@@ -1,0 +1,31 @@
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        
+        /* Hide scrollbar for clean app feel */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        
+        .view-panel { display: none; animation: fadeIn 0.3s ease-in-out; padding-bottom: 80px; }
+        .view-panel.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* SVG Human Body Styles (No Glow) */
+        .muscle-group {
+            fill: #334155;
+            stroke: #0f172a;
+            stroke-width: 1.5;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .muscle-group:hover {
+            fill: #ef4444;
+        }
+        
+        /* Progress Bar Animation */
+        .progress-bar-fill {
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
